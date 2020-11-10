@@ -30,3 +30,10 @@ This uses aiohttp package for async requests
 `--reqs` can fire off as many parallel requests as applied (tested
 upto 10k), session is reused, so if the keep_alive time out is
 exceeded this may fail wierdly
+
+
+## TESTING
+
+For unit testing itself aiohttp has a pytest fixture to mock away
+responses.  (https://docs.aiohttp.org/en/stable/testing.html) However
+this wasn't completed in the given time!
