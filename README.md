@@ -29,7 +29,10 @@ This uses aiohttp package for async requests
 
 `--reqs` can fire off as many parallel requests as applied (tested
 upto 10k), session is reused, so if the keep_alive time out is
-exceeded this may fail wierdly
+exceeded this may fail wierdly.
+
+Currently for any client exceptions session is closed and reattempted
+after 30s (usual example is when webserver is dead)
 
 
 ## TESTING
