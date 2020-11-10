@@ -38,18 +38,20 @@ class AsyncMonitorDaemon():
         return await resp.read() # Not consumed so can be dropped atm
    
   async def multi_fetch(self):
+    """A method that reuses a session to fire off multiple requests and
+    wait for a specified time after to fire the next batch. The number of parallel requests is governed     by req_count & time to wait by sleep_time """
     reqs = []
     timeout = ClientTimeout(total=300)
     async with ClientSession(connector=TCPConnector(keepalive_timeout=600), timeout=timeout) as session:
-      ctr = 0
+      req_ctr = 0
       while True:
         start = time.perf_counter()
         for i in range(self.req_count):
-          self.logger.debug('firing off req %d', ctr)
+          self.logger.debug('firing off req %d', req_ctr)
           reqs.append(asyncio.ensure_future(
             self.fetch(session)
           ))
-          ctr = ctr+1
+          req_ctr = ctr+1
 
         resps = await asyncio.gather(*reqs)
         end = time.perf_counter()
