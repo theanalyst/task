@@ -18,6 +18,7 @@ if __name__ == "__main__":
                         help='log file for output')
     args = parser.parse_args()
 
-    daemon = AsyncMonitorDaemon(args.uri, args.reqs, args.sleep_time, args.debug)
+    daemon = AsyncMonitorDaemon(args.uri, args.reqs, args.sleep_time, args.debug,
+                                args.log_file)
     loop = asyncio.get_event_loop()
     daemon.run(loop)
