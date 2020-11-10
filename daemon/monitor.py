@@ -50,7 +50,7 @@ class AsyncMonitorDaemon():
           reqs.append(asyncio.ensure_future(
             self.fetch(session)
           ))
-          req_ctr = ctr+1
+          req_ctr = req_ctr+1
 
         resps = await asyncio.gather(*reqs)
         end = time.perf_counter()
