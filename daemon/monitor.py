@@ -19,8 +19,10 @@ def default_int(val, default_val):
 class AsyncMonitorDaemon():
   """A simple async aiohttp client that can at present do GET requests on a uri"""
 
-  def __init__(self, endpoint, count = 10, sleep_time=10):
+  def __init__(self, endpoint, count = 10, sleep_time=10, debug=False):
       self.logger = logging.getLogger('mag-mon')  # Magnificent Monitor!
+      if debug:
+        self.logger.setLevel(logging.DEBUG)
       self.endpoint = endpoint
       self.req_count = count  # parallel async req
       self.sleep_time = default_int(sleep_time, 10)

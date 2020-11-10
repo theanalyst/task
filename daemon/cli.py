@@ -12,9 +12,10 @@ if __name__ == "__main__":
                         help='Concurrent reqs to fire')
     parser.add_argument('--sleep_time', default = 10,
                         help='time to sleep between requests')
-    
+    parser.add_argument('--debug', action='store_true',
+                        help='debug logging')
     args = parser.parse_args()
 
-    daemon = AsyncMonitorDaemon(args.uri, args.reqs, args.sleep_time)
+    daemon = AsyncMonitorDaemon(args.uri, args.reqs, args.sleep_time, args.debug)
     loop = asyncio.get_event_loop()
     daemon.run(loop)
