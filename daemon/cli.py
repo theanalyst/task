@@ -15,10 +15,4 @@ if __name__ == "__main__":
 
     daemon = AsyncMonitorDaemon(args.uri, args.reqs)
     loop = asyncio.get_event_loop()
-
-    while True:
-        future = asyncio.ensure_future(daemon.run())
-        loop.run_until_complete(future)
-        time.sleep(10)
-
-    
+    daemon.run(loop)
