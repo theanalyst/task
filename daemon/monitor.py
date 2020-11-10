@@ -27,14 +27,3 @@ class AsyncMonitorDaemon():
         
     resps = await asyncio.gather(*reqs)
           
-
-
-if __name__ == "__main__":
-    
-    daemon = AsyncMonitorDaemon('http://localhost:12345')
-    loop = asyncio.get_event_loop()
-
-    while True:
-      future = asyncio.ensure_future(daemon.run())
-      loop.run_until_complete(future)
-      time.sleep(10)
