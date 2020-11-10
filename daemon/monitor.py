@@ -37,15 +37,13 @@ class AsyncMonitorDaemon():
   async def multi_fetch(self):
     reqs = []
     timeout = ClientTimeout(total=300)
-    # TODO reuse sessions more creatively
-    while True:
-      async with ClientSession(connector=TCPConnector(keepalive_timeout=600), timeout=timeout) as session:
+    async with ClientSession(connector=TCPConnector(keepalive_timeout=600), timeout=timeout) as session:
+      while True:
         for i in range(self.req_count):
           self.logger.debug('making req')
           reqs.append(asyncio.ensure_future(
             self.fetch(session)
           ))
-        
         resps = await asyncio.gather(*reqs)
         await asyncio.sleep(self.sleep_time)
     
