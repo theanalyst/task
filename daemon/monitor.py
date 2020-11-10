@@ -39,12 +39,16 @@ class AsyncMonitorDaemon():
     timeout = ClientTimeout(total=300)
     async with ClientSession(connector=TCPConnector(keepalive_timeout=600), timeout=timeout) as session:
       while True:
+        start = time.perf_counter()
         for i in range(self.req_count):
           self.logger.debug('making req')
           reqs.append(asyncio.ensure_future(
             self.fetch(session)
           ))
         resps = await asyncio.gather(*reqs)
+        end = time.perf_counter()
+        t = end -start
+        self.logger.debug('%d reqs took %s s', self.req_count, t)
         await asyncio.sleep(self.sleep_time)
     
   def run(self, ev_loop):
