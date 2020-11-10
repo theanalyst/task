@@ -2,7 +2,7 @@ import asyncio
 import logging 
 import time
 
-from aiohttp import ClientSession, TCPConnector, ClientTimeout
+from aiohttp import ClientSession, TCPConnector, ClientTimeout, ClientConnectorError
 
 LOG_FORMAT='%(asctime)-15s %(levelname)s %(message)s'
 logging.basicConfig(format=LOG_FORMAT)
@@ -41,23 +41,30 @@ class AsyncMonitorDaemon():
     wait for a specified time after to fire the next batch. The number of parallel requests is governed     by req_count & time to wait by sleep_time """
     reqs = []
     timeout = ClientTimeout(total=300)
-    async with ClientSession(connector=TCPConnector(keepalive_timeout=600), timeout=timeout) as session:
-      req_ctr = 0
-      while True:
-        start = time.perf_counter()
-        for i in range(self.req_count):
-          self.logger.debug('firing off req %d', req_ctr)
-          reqs.append(asyncio.ensure_future(
-            self.fetch(session)
-          ))
-          req_ctr = req_ctr+1
+    while True: 
+      try:
+        async with ClientSession(connector=TCPConnector(keepalive_timeout=600), timeout=timeout) as session:
+          req_ctr = 0
+          while True:
+            start = time.perf_counter()
+            for i in range(self.req_count):
+              self.logger.debug('firing off req %d', req_ctr)
+              reqs.append(asyncio.ensure_future(
+                self.fetch(session)
+              ))
+              req_ctr = req_ctr+1
 
-        resps = await asyncio.gather(*reqs)
-        end = time.perf_counter()
-        t = end -start
-        self.logger.debug('%d reqs took %s s', self.req_count, t)
-        await asyncio.sleep(self.sleep_time)
-    
+            resps = await asyncio.gather(*reqs)
+            end = time.perf_counter()
+            t = end -start
+            self.logger.debug('%d reqs took %s s', self.req_count, t)
+            await asyncio.sleep(self.sleep_time)
+      except ClientConnectorError as e:
+          self.logger.error('An exception has occurred with client: %s', e)
+
+      self.logger.info('Waiting for 30s before retrying')
+      time.sleep(30)
+          
   def run(self, ev_loop):
     future = asyncio.ensure_future(self.multi_fetch())
     ev_loop.run_until_complete(future)
