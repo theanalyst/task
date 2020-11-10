@@ -3,6 +3,9 @@ import asyncio
 import logging 
 import time
 
+LOG_FORMAT='%(asctime)-15s %(message)s'
+logging.basicConfig(format=LOG_FORMAT)
+
 class AsyncMonitorDaemon():
   """A simple async aiohttp client that can at present do GET requests on a uri"""
 
