@@ -5,7 +5,7 @@ import time
 
 from aiohttp import ClientSession, TCPConnector, ClientTimeout
 
-LOG_FORMAT='%(asctime)-15s %(message)s'
+LOG_FORMAT='%(asctime)-15s %(levelname)s %(message)s'
 logging.basicConfig(format=LOG_FORMAT)
 
 def default_int(val, default_val):
@@ -19,10 +19,13 @@ def default_int(val, default_val):
 class AsyncMonitorDaemon():
   """A simple async aiohttp client that can at present do GET requests on a uri"""
 
-  def __init__(self, endpoint, count = 10, sleep_time=10, debug=False):
+  def __init__(self, endpoint, count = 10, sleep_time=10, debug=False, log_file='mon.log'):
       self.logger = logging.getLogger('mag-mon')  # Magnificent Monitor!
       if debug:
         self.logger.setLevel(logging.DEBUG)
+      fh = logging.FileHandler(log_file)
+      self.logger.addHandler(fh)
+
       self.endpoint = endpoint
       self.req_count = count  # parallel async req
       self.sleep_time = default_int(sleep_time, 10)
