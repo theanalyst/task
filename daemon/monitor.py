@@ -27,7 +27,7 @@ class AsyncMonitorDaemon():
       self.logger.addHandler(fh)
 
       self.endpoint = endpoint
-      self.req_count = count  # parallel async req
+      self.req_count = default_int(count, 10)  # parallel async req
       self.sleep_time = default_int(sleep_time, 10)
 
   async def fetch(self, session):
